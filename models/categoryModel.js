@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const CategorySchema = new mongoose.Schema(
     {
-        categoryName: { type: String, default: "" },
+        categoryName: { type: String, maxlength: 160, default: "" },
+    },
+    {
+      timestamps: true,
+      collection: "categories",
     }
 );
 

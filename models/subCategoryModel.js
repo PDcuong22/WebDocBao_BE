@@ -4,8 +4,14 @@ const SubCategorySchema = new mongoose.Schema(
     {
         subCategoryName: { type: String, maxlength: 160, default: "" },
         categoryId: {
-            type: mongoose.SchemaTypes.ObjectId
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "categories",
+            require: true,
         }
+    },
+    {
+      timestamps: true,
+      collection: "subCategories",
     }
 );
 
