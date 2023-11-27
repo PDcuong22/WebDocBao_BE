@@ -6,7 +6,7 @@ const getAllAuthor = (req, res) => {
       res.json(data);
     })
     .catch((error) => {
-      res.status(500).json("Loi server");
+      res.status(500).json({error: "Loi server"});
     });
 };
 
@@ -17,16 +17,16 @@ const createAuthor = (req, res) => {
   })
     .then((data) => {
       if (data) {
-        res.json("author nay da ton tai");
+        res.status(400).json({ error: "Author nay da ton tai" });
       } else {
         return AuthorModel.create({ authorName: authorName });
       }
     })
     .then((data) => {
-      res.json("Tao Author thanh cong");
+      res.json(data);
     })
     .catch((err) => {
-      res.status(500).json("Tao Author that bai");
+      res.status(500).json({ error: "Tao Author that bai" });
     });
 };
 

@@ -11,7 +11,7 @@ const getAllArticle = (req, res) => {
       res.json(sortData);
     })
     .catch((error) => {
-      res.status(500).json("Loi server");
+      res.status(500).json({error: "Loi server"});
     });
 };
 
@@ -23,7 +23,7 @@ const updateArticle = (req, res) => {
       res.json(data);
     })
     .catch((error) => {
-      res.status(500).json("Loi server");
+      res.status(500).json({error: "Loi server"});
     });
 };
 
@@ -31,19 +31,20 @@ const createArticle = (req, res) => {
   var name = req.body.articleName;
   ArticleModel.findOne({
     articleName: name,
+    subCategoryId: req.body.subCategoryId,
   })
     .then((data) => {
       if (data) {
-        res.json("article nay da ton tai");
+        res.status(400).json({ error: "Article này đã tồn tại" });
       } else {
         return ArticleModel.create(req.body);
       }
     })
     .then((data) => {
-      res.json("Tao article thanh cong");
+      res.json(data);
     })
-    .catch((err) => {
-      res.status(500).json("Tao article that bai");
+    .catch((error) => {
+      res.status(500).json({ error: "Tao article that bai" });
     });
 };
 
@@ -60,7 +61,7 @@ const getDetailArticle = (req, res) => {
       res.json(data);
     })
     .catch((err) => {
-      console.log(err);
+      res.status(500).json({ error: "Lay article that bai" });
     });
 };
 
@@ -80,7 +81,7 @@ const getArticleById = (req, res) => {
       res.json(data);
     })
     .catch((err) => {
-      console.log(err);
+      res.status(500).json({ error: "Lay article that bai" });
     });
 };
 
@@ -101,7 +102,7 @@ const getArtBySubCategoryId = (req, res) => {
       res.json(data);
     })
     .catch((err) => {
-      console.log(err);
+      res.status(500).json({ error: "Lay article that bai" });
     });
 };
 

@@ -6,7 +6,7 @@ const getAllSubCategory = (req, res) => {
       res.json(data);
     })
     .catch((error) => {
-      res.status(500).json("Loi server");
+      res.status(500).json({ error: "Loi server" });
     });
 };
 
@@ -18,7 +18,7 @@ const updateSubCategory = (req, res) => {
       res.json(data);
     })
     .catch((error) => {
-      res.status(500).json("Loi server");
+      res.status(500).json({ error: "Loi server" });
     });
 };
 
@@ -26,10 +26,11 @@ const createSubCategory = (req, res) => {
   var subCategory = req.body;
   SubCategoryModel.findOne({
     subCategoryName: subCategory.subCategoryName,
+    categoryId: subCategory.categoryId,
   })
     .then((data) => {
       if (data) {
-        res.json("subCategory nay da ton tai");
+        res.status(400).json({ error: "subCategory này đã tồn tại" });
       } else {
         return SubCategoryModel.create({
           subCategoryName: subCategory.subCategoryName,
@@ -38,10 +39,10 @@ const createSubCategory = (req, res) => {
       }
     })
     .then((data) => {
-      res.json("Tao subCategory thanh cong");
+      res.json(data);
     })
     .catch((err) => {
-      res.status(500).json("Tao subCategory that bai");
+      res.status(500).json({ error: "Tạo subCategory thất bại" });
     });
 };
 

@@ -5,6 +5,7 @@ const subCategoryRouter = require("./routers/subCategoryRouter");
 const authorRouter = require("./routers/authorRouter");
 const articleRouter = require("./routers/articleRouter");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 require("dotenv").config();
 
 
@@ -22,10 +23,10 @@ app.get("/", (req, res) => {
     res.send("Hello World!!!");
 });
 
-app.use("/api/category", categoryRouter);
-app.use("/api/subCategory",subCategoryRouter);
-app.use("/api/author", authorRouter);
-app.use("/api/article", articleRouter);
+app.use("/api/category", cors(), categoryRouter);
+app.use("/api/subCategory", cors(), subCategoryRouter);
+app.use("/api/author", cors(), authorRouter);
+app.use("/api/article", cors(), articleRouter);
 
 app.listen(POST, () => {
     console.log(`Example app listening on POST ${POST}`);
