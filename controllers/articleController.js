@@ -4,8 +4,8 @@ const getAllArticle = (req, res) => {
   ArticleModel.find({})
     .then((data) => {
       let sortData = data.sort((a, b) => {
-        if (a.level < b.level) return -1;
-        if (a.level > b.level) return 1;
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
         return 0;
       });
       res.json(sortData);
@@ -97,9 +97,67 @@ const getArtBySubCategoryId = (req, res) => {
         path: "categoryId", // populate các articles trong mỗi subcategory
       },
     })
+    .then((data) => {
+      let sortData = data.sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        return 0;
+      });
+      res.json(sortData);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: "Lay article that bai" });
+    });
+};
 
+const getArtByLevel = (req, res, next) => {
+  const { subCateId, level } = req.params;
+  ArticleModel.find({
+    subCategoryId: subCateId,
+    level: level,
+  })
+    .populate("authorId")
+    .populate({
+      path: "subCategoryId",
+      populate: {
+        path: "categoryId", // populate các articles trong mỗi subcategory
+      },
+    })
     .then((data) => {
       res.json(data);
+      let sortData = data.sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        return 0;
+      });
+      res.json(sortData);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: "Lay article that bai" });
+    });
+};
+
+const getArtByLevelSmall = (req, res, next) => {
+  const { subCateId } = req.params;
+  ArticleModel.find({
+    subCategoryId: subCateId,
+  })
+    .populate("authorId")
+    .populate({
+      path: "subCategoryId",
+      populate: {
+        path: "categoryId", // populate các articles trong mỗi subcategory
+      },
+    })
+    .then((data) => {
+      let dataMain = data?.filter((item) => item.level !== 1);
+      let sortData = dataMain.sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        return 0;
+      });
+
+      res.json(sortData);
     })
     .catch((err) => {
       res.status(500).json({ error: "Lay article that bai" });
@@ -113,4 +171,6 @@ module.exports = {
   getArticleById,
   getArtBySubCategoryId,
   updateArticle,
+  getArtByLevel,
+  getArtByLevelSmall,
 };
