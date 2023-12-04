@@ -164,6 +164,35 @@ const getArtByLevelSmall = (req, res, next) => {
     });
 };
 
+// Lấy các bài báo của một subcategory nhưng không chứa bài báo hiện tại
+const getArtBySubCategoryIdNot = (req, res, next) => {
+  const { subCateId } = req.params;
+  var articleId = req.body.articleId;
+  console.log("articleId:", req.body.articleId);
+  ArticleModel.find({
+    subCategoryId: subCateId,
+  })
+    .populate("authorId")
+    .populate({
+      path: "subCategoryId",
+      populate: {
+        path: "categoryId", // populate các articles trong mỗi subcategory
+      },
+    })
+    .then((data) => {
+      let dataMain = data?.filter((item) => item._id.toString() !== articleId);
+      let sortData = dataMain.sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        return 0;
+      });
+      res.json(sortData);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Lay article that bai" });
+    });
+};
+
 module.exports = {
   getAllArticle,
   createArticle,
@@ -173,4 +202,5 @@ module.exports = {
   updateArticle,
   getArtByLevel,
   getArtByLevelSmall,
+  getArtBySubCategoryIdNot,
 };

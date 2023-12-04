@@ -8,6 +8,7 @@ const {
     updateArticle,
     getArtByLevel,
     getArtByLevelSmall,
+    getArtBySubCategoryIdNot,
 } = require("../controllers/articleController");
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.get("/subCategory/:subCateId/:level", getArtByLevel); // lấy theo level
 router.get("/subCategorySmall/:subCateId", getArtByLevelSmall);
 router.post("/create", createArticle);
 router.put("/:_id", updateArticle);
+router.post("/subCategoryNot/:subCateId", getArtBySubCategoryIdNot);
 
 module.exports = router;
