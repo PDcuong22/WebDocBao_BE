@@ -1,17 +1,19 @@
 const ArticleModel = require("../models/articleModel");
 
 const getAllArticle = (req, res) => {
-  ArticleModel.find({})
-    .then((data) => {
-      let sortData = data.sort((a, b) => {
-        if (a.createdAt > b.createdAt) return -1;
-        if (a.createdAt < b.createdAt) return 1;
-        return 0;
-      });
-      res.json(sortData);
+  const { search } = req.query;
+  let query = {};
+  if (search) {
+    query.articleName = { $regex: search, $options: 'i' };
+  }
+  ArticleModel.find(query)
+    .sort({ createdAt: -1 }) // Simplify the sort logic
+    .limit(50)
+    .then(data => {
+      res.json(data);
     })
-    .catch((error) => {
-      res.status(500).json({error: "Loi server"});
+    .catch(error => {
+      res.status(500).json({ error: "Loi server" });
     });
 };
 
@@ -45,6 +47,20 @@ const createArticle = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({ error: "Tao article that bai" });
+    });
+};
+
+const deleteArticle = (req, res) => {
+  const { articleId } = req.params;
+  ArticleModel.findByIdAndDelete(articleId)
+    .then((deletedArticle) => {
+      if (!deletedArticle) {
+        return res.status(404).json({ message: 'Article not found' });
+      }
+      res.json({ message: 'Article deleted successfully', deletedArticle });
+    })
+    .catch((error) => {
+      res.status(500).json({ message: 'Error deleting article', error });
     });
 };
 
@@ -203,4 +219,5 @@ module.exports = {
   getArtByLevel,
   getArtByLevelSmall,
   getArtBySubCategoryIdNot,
+  deleteArticle,
 };
