@@ -9,6 +9,7 @@ const {
     getArtByLevel,
     getArtByLevelSmall,
     getArtBySubCategoryIdNot,
+    deleteArticle,
 } = require("../controllers/articleController");
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.get("/subCategorySmall/:subCateId", getArtByLevelSmall);
 router.post("/create", createArticle);
 router.put("/:_id", updateArticle);
 router.post("/subCategoryNot/:subCateId", getArtBySubCategoryIdNot);
+router.delete("/:articleId", deleteArticle);
 
 module.exports = router;
