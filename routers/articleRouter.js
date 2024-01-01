@@ -9,6 +9,8 @@ const {
   getArtByLevel,
   getArtByLevelSmall,
   getArtBySubCategoryIdNot,
+  deleteArticle,
+  like,
 } = require("../controllers/articleController");
 const {
   getComments,
@@ -21,6 +23,7 @@ const router = express.Router();
 
 router.get("/", getAllArticle);
 router.get("/:id", getArticleById);
+router.delete("/:id", deleteArticle);
 router.get("/subCategory/:subCateId", getArtBySubCategoryId);
 router.get("/info", getDetailArticle);
 router.get("/subCategory/:subCateId/:level", getArtByLevel); // lấy theo level -> để lấy level
@@ -34,5 +37,6 @@ router.post("/comments/:id", createComment);
 router.post("/comments/admin/like/:id", adminLikeComment);
 router.put("/comments/:id", editComment);
 router.delete("/comments/:id", deleteComment);
+router.post("/like/:id", like);
 
 module.exports = router;

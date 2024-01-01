@@ -2,6 +2,7 @@ const ArticleModel = require("../models/articleModel");
 
 const getAllArticle = (req, res) => {
   ArticleModel.find({})
+    .populate("subCategoryId")
     .then((data) => {
       let sortData = data.sort((a, b) => {
         if (a.createdAt > b.createdAt) return -1;
@@ -11,7 +12,7 @@ const getAllArticle = (req, res) => {
       res.json(sortData);
     })
     .catch((error) => {
-      res.status(500).json({error: "Loi server"});
+      res.status(500).json({ error: "Loi server" });
     });
 };
 
@@ -23,7 +24,7 @@ const updateArticle = (req, res) => {
       res.json(data);
     })
     .catch((error) => {
-      res.status(500).json({error: "Loi server"});
+      res.status(500).json({ error: "Loi server" });
     });
 };
 
@@ -45,6 +46,17 @@ const createArticle = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({ error: "Tao article that bai" });
+    });
+};
+
+const deleteArticle = (req, res) => {
+  const { id } = req.params;
+  ArticleModel.findByIdAndDelete(id)
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
     });
 };
 
@@ -193,14 +205,31 @@ const getArtBySubCategoryIdNot = (req, res, next) => {
     });
 };
 
+const like = async (req, res) => {
+  const { id } = req.params;
+  const article = await ArticleModel.findById(id);
+  if (article.like.includes(req.body.userId)) {
+    const userIndex = article.like.findIndex(
+      (u) => u.toString() === req.body.userId
+    );
+    article.like.splice(userIndex, 1);
+  } else {
+    article.like.push(req.body.userId);
+  }
+  await article.save();
+  res.json(article);
+};
+
 module.exports = {
   getAllArticle,
   createArticle,
   getDetailArticle,
   getArticleById,
   getArtBySubCategoryId,
+  deleteArticle,
   updateArticle,
   getArtByLevel,
   getArtByLevelSmall,
   getArtBySubCategoryIdNot,
+  like,
 };

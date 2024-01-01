@@ -28,6 +28,12 @@ const ArticleSchema = new mongoose.Schema(
     imageTittle: {
       type: String,
     },
+    like: [
+      {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "users",
+      },
+    ],
   },
   {
     timestamps: true,
