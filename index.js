@@ -6,6 +6,8 @@ const authorRouter = require("./routers/authorRouter");
 const articleRouter = require("./routers/articleRouter");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const socket = require("socket.io");
+
 require("dotenv").config();
 
 db.connectDB();
@@ -33,8 +35,31 @@ app.use("/api/subCategory", subCategoryRouter);
 app.use("/api/author", authorRouter);
 app.use("/api/auth", require("./routers/auth"));
 app.use("/api/user", require("./routers/userRouter"));
+app.use("/api/message", require("./routers/messageRouter"));
 app.use("/api/article", articleRouter);
 
-app.listen(POST, () => {
+const sv = app.listen(POST, () => {
   console.log(`Example app listening on POST ${POST}`);
+});
+
+const io = socket(sv, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
+
+global.onlineUsers = new Map();
+io.on("connection", (socket) => {
+  global.chatSocket = socket;
+  socket.on("user", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
+
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data);
+    }
+  });
 });
